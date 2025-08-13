@@ -138,54 +138,66 @@ const BeforeAfter = () => {
   );
 };
 
-const QuoteForm = () => (
-  <Card className="bg-white/[0.03]">
-    <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={(e)=>e.preventDefault()}>
+const QuoteForm = () => {
+  const FORMSPREE_ENDPOINT = "https://formspree.io/f/YOUR_FORM_ID"; // ⬅ replace with your real Formspree link
+  const [status, setStatus] = React.useState("idle");
+  const [message, setMessage] = React.useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setStatus("sending");
+    setMessage("");
+
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+
+    try {
+      const resp = await fetch(FORMSPREE_ENDPOINT, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData
+      });
+
+      if (resp.ok) {
+        setStatus("success");
+        setMessage("Thanks! We’ll get back to you within 24 business hours.");
+        form.reset();
+      } else {
+        setStatus("error");
+        setMessage("Something went wrong. Please try again.");
+      }
+    } catch (err) {
+      setStatus("error");
+      setMessage("Network error. Please try again.");
+    }
+  }
+
+  return (
+    <form className="grid grid-cols-1 gap-4 md:grid-cols-2" onSubmit={handleSubmit}>
       <div>
         <label className="mb-1 block text-sm text-white/70">Full name</label>
-        <input className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="Jane Nguyen" />
+        <input name="name" required className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" />
       </div>
       <div>
         <label className="mb-1 block text-sm text-white/70">Work email</label>
-        <input type="email" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="jane@company.com" />
-      </div>
-      <div>
-        <label className="mb-1 block text-sm text-white/70">Company</label>
-        <input className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="Company, Inc." />
-      </div>
-      <div>
-        <label className="mb-1 block text-sm text-white/70">Team size</label>
-        <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="50" />
-      </div>
-      <div className="md:col-span-2">
-        <label className="mb-1 block text-sm text-white/70">What outcome do you want in 90 days?</label>
-        <input className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="e.g., reduce support response time by 40%" />
-      </div>
-      <div>
-        <label className="mb-1 block text-sm text-white/70">Rough budget (USD)</label>
-        <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="60000" />
-      </div>
-      <div>
-        <label className="mb-1 block text-sm text-white/70">Timeline</label>
-        <select className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2">
-          <option>ASAP</option>
-          <option>Within 1–2 months</option>
-          <option>Quarterly plan</option>
-        </select>
+        <input name="email" type="email" required className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" />
       </div>
       <div className="md:col-span-2">
         <label className="mb-1 block text-sm text-white/70">Notes</label>
-        <textarea className="h-28 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" placeholder="Tell us about your data, tools and current bottlenecks…"></textarea>
+        <textarea name="notes" className="h-28 w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" />
       </div>
       <div className="md:col-span-2">
-        <button type="submit" className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-white px-5 py-3 font-medium text-black transition hover:bg-white/90">
-          Request quote <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+        <button disabled={status === "sending"} type="submit" className="rounded-2xl bg-white px-5 py-3 font-medium text-black">
+          {status === "sending" ? "Sending..." : "Request quote"}
         </button>
-        <p className="mt-3 text-xs text-white/50">We reply within 24 business hours. No spam, ever.</p>
+        {message && (
+          <p className={`mt-3 text-sm ${status === "success" ? "text-emerald-300" : "text-rose-300"}`}>{message}</p>
+        )}
       </div>
     </form>
-  </Card>
-);
+  );
+};
+
 
 export default function App() {
   return (
