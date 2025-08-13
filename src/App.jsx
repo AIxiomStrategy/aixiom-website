@@ -227,10 +227,6 @@ export default function App() {
         <div className="pointer-events-none absolute inset-0 -z-10 opacity-60 [background:radial-gradient(60%_40%_at_50%_-10%,rgba(255,255,255,0.15),transparent_60%),radial-gradient(50%_50%_at_80%_10%,rgba(80,200,255,0.18),transparent_60%)]" />
         <Container>
           <div className="flex min-h-[68vh] flex-col items-center justify-center py-16 text-center">
-            <Pill>
-              <Sparkles className="h-3.5 w-3.5" />
-              Built with GPT‑5 era thinking
-            </Pill>
             <motion.h1 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mt-6 max-w-4xl text-4xl font-semibold leading-tight sm:text-6xl">
               Think different. <span className="text-white/70">Ship faster.</span> Win with AI.
             </motion.h1>
@@ -261,11 +257,11 @@ export default function App() {
           <div className="grid gap-6 md:grid-cols-4">
             <Card>
               <div className="mb-3 flex items-center gap-3 text-white/80"><Gauge className="h-5 w-5" /><strong>1. The Fog</strong></div>
-              <p className="text-sm text-white/70">Too many tools. Not enough traction. Teams try AI ad‑hoc; value is invisible.</p>
+              <p className="text-sm text-white/70">Too many tools. Not enough traction. Teams try AI ad‑hoc, value is invisible.</p>
             </Card>
             <Card>
               <div className="mb-3 flex items-center gap-3 text-white/80"><Shield className="h-5 w-5" /><strong>2. The Frame</strong></div>
-              <p className="text-sm text-white/70">AI Impact Scan clarifies where AI works <em>today</em>—with your data, workflows, and risk profile.</p>
+              <p className="text-sm text-white/70">AI Impact Scan clarifies where AI works <em>today</em> with your data, workflows, and risk profile.</p>
             </Card>
             <Card>
               <div className="mb-3 flex items-center gap-3 text-white/80"><Rocket className="h-5 w-5" /><strong>3. The Build</strong></div>
@@ -279,7 +275,7 @@ export default function App() {
           <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-sm text-white/70">
             <div className="mb-2 text-white">Our Think‑Different Pledge</div>
             <ul className="grid gap-2 sm:grid-cols-2">
-              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-emerald-300" /> Plain English. No buzzwords (không màu mè).</li>
+              <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-emerald-300" /> Plain English. No buzzwords.</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-emerald-300" /> Outcomes over demos. We commit to metrics.</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-emerald-300" /> Build‑with‑you: enable your team, not replace it.</li>
               <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4 text-emerald-300" /> Privacy‑first, compliant by design.</li>
