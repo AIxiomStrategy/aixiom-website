@@ -179,7 +179,7 @@ const QuoteForm = () => {
         <input name="name" required className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" />
       </div>
       <div>
-        <label className="mb-1 block text-sm text-white/70">Work email</label>
+        <label className="mb-1 block text-sm text-white/70">Email</label>
         <input name="email" type="email" required className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" />
       </div>
       <div className="md:col-span-2">
