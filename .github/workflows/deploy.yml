@@ -25,16 +25,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: "npm"
+          # IMPORTANT: no cache here (you have no package-lock.json)
 
-      # Use npm install (no lockfile required)
       - name: Install dependencies
-        run: npm install
+        run: npm install --no-audit --no-fund
 
       - name: Build
         run: npm run build
         env:
-          # You have a custom domain (aixom.be) → base should be "/"
           BASE_PATH: "/"
 
       - name: Upload artifact
