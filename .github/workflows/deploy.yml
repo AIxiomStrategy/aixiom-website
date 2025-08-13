@@ -27,13 +27,14 @@ jobs:
           node-version: 20
           cache: "npm"
 
+      # Use npm install (no lockfile required)
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Build
         run: npm run build
         env:
-          # For a custom domain (like aixom.be) set base to "/"
+          # You have a custom domain (aixom.be) → base should be "/"
           BASE_PATH: "/"
 
       - name: Upload artifact
