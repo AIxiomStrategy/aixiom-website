@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GrapesJS Studio – Local Editor</title>
+
+  <!-- GrapesJS core styles/scripts -->
+  <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css" />
+  <script src="https://unpkg.com/grapesjs/dist/grapes.min.js"></script>
+  <script src="https://unpkg.com/grapesjs-preset-webpage"></script>
+
+  <!-- Studio SDK via CDN -->
+  <script src="https://unpkg.com/@grapesjs/studio-sdk"></script>
+
+  <style>
+    html,body {height:100%;margin:0}
+    #gjs {height:100vh}
+  </style>
+</head>
+<body>
+  <div id="gjs">Loading your page…</div>
+
+  <script>
+    (async () => {
+      // 1) Initialize the Studio SDK (use your license key)
+      const sdk = new studioSDK.StudioSDK({
+        licenseKey: 'YOUR_LICENSE_KEY',     // <-- paste from step 2
+        baseUrl: 'https://app.grapesjs.com' // leave as-is
+      });
+
+      // 2) Create a GrapesJS editor instance, with common blocks
+      const editor = await sdk.createEditor({
+        container: '#gjs',
+        options: {
+          height: '100vh',
+          storageManager: { type: 'local', autosave: true, autoload: true },
+          plugins: ['gjs-preset-webpage'],
+          pluginsOpts: { 'gjs-preset-webpage': {} }
+        }
+      });
+
+      // 3) (Optional) Load your current homepage HTML into the canvas
+      // Adjust the path if your entry file is different
+      try {
+        const html = await fetch('../index.html').then(r => r.text());
+        editor.setComponents(html);
+
+        // If you have a main stylesheet, inject it so the canvas matches your site:
+        // const css = await fetch('../css/style.css').then(r => r.text());
+        // editor.setStyle(css);
+      } catch (e) {
+        editor.setComponents('<h1>Start designing…</h1><p>Use the Blocks panel.</p>');
+      }
+
+      // Export any time from the editor menu (≡) → Export
+    })();
+  </script>
+</body>
+</html>
