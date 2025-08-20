@@ -44,10 +44,20 @@ const ROI = () => {
   const [projectCost, setProjectCost] = useState(60000);
 
   const { annualSavings, roiPct } = useMemo(() => {
-    const weeklyLabor = number(teamSize) * (number(avgSalary) / 52) * (number(hoursSaved) / 40) * number(adoption);
+    const weeklyLabor =
+      number(teamSize) *
+      (number(avgSalary) / 52) *
+      (number(hoursSaved) / 40) *
+      number(adoption);
     const annualLaborSavings = weeklyLabor * 52;
-    const annualSavings = Math.max(0, annualLaborSavings + number(liftRevenue));
-    const roiPct = number(projectCost) > 0 ? ((annualSavings - number(projectCost)) / number(projectCost)) * 100 : 0;
+    const annualSavings = Math.max(
+      0,
+      annualLaborSavings + number(liftRevenue)
+    );
+    const roiPct =
+      number(projectCost) > 0
+        ? ((annualSavings - number(projectCost)) / number(projectCost)) * 100
+        : 0;
     return { annualSavings, roiPct };
   }, [teamSize, avgSalary, hoursSaved, adoption, liftRevenue, projectCost]);
 
@@ -57,52 +67,135 @@ const ROI = () => {
     <Card className="bg-gradient-to-b from-white/[0.06] to-transparent">
       <div className="mb-6 flex items-center gap-3">
         <LineChart className="h-5 w-5 opacity-80" />
-        <h3 className="text-lg font-semibold">12‑Month ROI Estimator</h3>
+        <h3 className="text-lg font-semibold">AI Value Lens</h3>
       </div>
+
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="space-y-4">
-          <div>
-            <label className="mb-1 block text-sm text-white/70">Team size</label>
-            <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" value={teamSize} onChange={(e) => setTeamSize(parseInt(e.target.value || "0", 10))} />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm text-white/70">Average annual salary (USD)</label>
-            <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" value={avgSalary} onChange={(e) => setAvgSalary(parseInt(e.target.value || "0", 10))} />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm text-white/70">Hours saved per person per week</label>
-            <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" value={hoursSaved} onChange={(e) => setHoursSaved(parseFloat(e.target.value || "0"))} />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm text-white/70">Adoption rate (0–1)</label>
-            <input type="number" step="0.05" min="0" max="1" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" value={adoption} onChange={(e) => setAdoption(parseFloat(e.target.value || "0"))} />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm text-white/70">Revenue lift (optional, USD)</label>
-            <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" value={liftRevenue} onChange={(e) => setLiftRevenue(parseInt(e.target.value || "0", 10))} />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm text-white/70">Project cost (USD)</label>
-            <input type="number" className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2" value={projectCost} onChange={(e) => setProjectCost(parseInt(e.target.value || "0", 10))} />
-          </div>
-        </div>
-        <div className="flex flex-col justify-between">
+        {/* RESULTS FIRST */}
+        <div className="order-1 flex flex-col justify-between md:order-1">
           <div className="space-y-4">
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div className="text-sm text-white/70">Projected annual impact</div>
-              <div className="mt-1 text-3xl font-semibold">${fmt.format(Math.round(annualSavings))}</div>
+              <div className="text-sm text-white/70">Projected ROI (12 months)</div>
+              <div
+                className={`mt-1 text-4xl font-semibold ${
+                  roiPct >= 0 ? "text-emerald-300" : "text-rose-300"
+                }`}
+              >
+                {isFinite(roiPct) ? `${fmt.format(Math.round(roiPct))}%` : "—"}
+              </div>
+              <div className="mt-1 text-xs text-white/60">
+                Includes labor savings, revenue lift, and adoption rate.
+              </div>
             </div>
+
             <div className="rounded-xl border border-white/10 bg-white/5 p-4">
-              <div className="text-sm text-white/70">ROI (12 months)</div>
-              <div className={`mt-1 text-3xl font-semibold ${roiPct >= 0 ? "text-emerald-300" : "text-rose-300"}`}>{isFinite(roiPct) ? `${fmt.format(Math.round(roiPct))}%` : "—"}</div>
+              <div className="text-sm text-white/70">Projected annual impact</div>
+              <div className="mt-1 text-3xl font-semibold">
+                ${fmt.format(Math.round(annualSavings))}
+              </div>
             </div>
           </div>
-          <p className="mt-6 text-xs text-white/50">This simplified model estimates labor savings + revenue lift versus project cost. We'll validate with your real data during the AI Impact Scan.</p>
+
+          <p className="mt-6 text-xs text-white/50">
+            Directional only — we validate and refine assumptions during the AI
+            Impact Scan.
+          </p>
+        </div>
+
+        {/* INPUTS SECOND */}
+        <div className="order-2 space-y-4 md:order-2">
+          <div>
+            <label className="mb-1 block text-sm text-white/70">Team size</label>
+            <input
+              type="number"
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+              value={teamSize}
+              onChange={(e) =>
+                setTeamSize(parseInt(e.target.value || "0", 10))
+              }
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm text-white/70">
+              Average annual salary (USD)
+            </label>
+            <input
+              type="number"
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+              value={avgSalary}
+              onChange={(e) =>
+                setAvgSalary(parseInt(e.target.value || "0", 10))
+              }
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm text-white/70">
+              Hours saved per person per week
+            </label>
+            <input
+              type="number"
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+              value={hoursSaved}
+              onChange={(e) => setHoursSaved(parseFloat(e.target.value || "0"))}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-sm text-white/70">
+              Project cost (USD)
+            </label>
+            <input
+              type="number"
+              className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+              value={projectCost}
+              onChange={(e) =>
+                setProjectCost(parseInt(e.target.value || "0", 10))
+              }
+            />
+          </div>
+
+          {/* Advanced assumptions */}
+          <details className="rounded-xl border border-white/10 bg-black/20 p-3 text-sm text-white/70">
+            <summary className="cursor-pointer text-white/80">
+              Advanced assumptions
+            </summary>
+            <div className="mt-3 space-y-4">
+              <div>
+                <label className="mb-1 block">Adoption rate (0–1)</label>
+                <input
+                  type="number"
+                  step="0.05"
+                  min="0"
+                  max="1"
+                  className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+                  value={adoption}
+                  onChange={(e) =>
+                    setAdoption(parseFloat(e.target.value || "0"))
+                  }
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block">Revenue lift (optional, USD)</label>
+                <input
+                  type="number"
+                  className="w-full rounded-xl border border-white/10 bg-black/30 px-3 py-2"
+                  value={liftRevenue}
+                  onChange={(e) =>
+                    setLiftRevenue(parseInt(e.target.value || "0", 10))
+                  }
+                />
+              </div>
+            </div>
+          </details>
         </div>
       </div>
     </Card>
   );
 };
+
 
 const BeforeAfter = () => {
   const [mode, setMode] = useState("before");
@@ -231,7 +324,7 @@ export default function App() {
               Think different. <span className="text-white/70">Ship faster.</span> Win with AI.
             </motion.h1>
             <p className="mt-6 max-w-2xl text-lg text-white/70">
-              We turn AI from buzzword to business advantage — <span className="text-white">together</span>. Vendor‑neutral. Privacy‑first. Outcome‑obsessed.
+              We turn AI from buzzword to business advantage — <span className="text-white">together</span>. Vendor‑neutral. Privacy‑first. Outcome‑driven.
             </p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
               <a href="#quote" className="group inline-flex items-center gap-2 rounded-2xl bg-white px-5 py-3 font-medium text-black transition hover:bg-white/90">
@@ -265,7 +358,7 @@ export default function App() {
             </Card>
             <Card>
               <div className="mb-3 flex items-center gap-3 text-white/80"><Rocket className="h-5 w-5" /><strong>3. The Build</strong></div>
-              <p className="text-sm text-white/70">We co‑build automations, RAG assistants, and copilots in focused sprints. Measure every week.</p>
+              <p className="text-sm text-white/70">We redesign broken workflows and test targeted AI solutions in focused sprints. Each week, we measure outcomes and adjust until the problem is solved.</p>
             </Card>
             <Card>
               <div className="mb-3 flex items-center gap-3 text-white/80"><LineChart className="h-5 w-5" /><strong>4. The Compounding Loop</strong></div>
@@ -286,35 +379,35 @@ export default function App() {
 
       <section id="solutions" className="py-16">
         <Container>
-          <SectionTitle eyebrow="Solutions" title="Three ways to start—one path to scale" subtitle="Choose your on‑ramp. We’ll meet you where you are." />
+          <SectionTitle eyebrow="Solutions" title="Three ways to start, one path to scale" subtitle="Choose your on‑ramp. We’ll meet you where you are." />
           <div className="grid gap-6 md:grid-cols-3">
             <Card>
               <h3 className="mb-2 text-xl font-semibold">AI Impact Scan</h3>
-              <p className="mb-4 text-sm text-white/70">2–3 weeks to map quick wins, risks, and ROI, using your real data.</p>
+              <p className="mb-4 text-sm text-white/70">Map quick wins, risks, and ROI, using your real data.</p>
               <ul className="mb-6 space-y-2 text-sm text-white/70">
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Workflow + data audit</li>
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Prioritized roadmap (90 / 180 days)</li>
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Security & compliance guardrails</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Workflow + data audit</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Prioritized roadmap (90 / 180 days)</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Security & compliance guardrails</li>
               </ul>
               <a href="#quote" className="inline-flex items-center gap-2 text-sm text-white hover:underline">Start with a scan <ArrowRight className="h-4 w-4" /></a>
             </Card>
             <Card>
               <h3 className="mb-2 text-xl font-semibold">AI Transformation Plan</h3>
-              <p className="mb-4 text-sm text-white/70">6–10 weeks to design and pilot core AI workflows with measurable outcomes.</p>
+              <p className="mb-4 text-sm text-white/70">Redesign critical workflows so AI actually delivers.</p>
               <ul className="mb-6 space-y-2 text-sm text-white/70">
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> RAG knowledge assistant</li>
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Automation + copilots (sales, support)</li>
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Impact dashboard</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Workflow redesign with guardrails</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Fit-to-stack solution mapping (keep what works, cut what doesn’t)</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Measurable outcomes tracked weekly in an impact dashboard</li>
               </ul>
               <a href="#quote" className="inline-flex items-center gap-2 text-sm text-white hover:underline">Plan my pilot <ArrowRight className="h-4 w-4" /></a>
             </Card>
             <Card>
               <h3 className="mb-2 text-xl font-semibold">Everyday AI Mastery</h3>
-              <p className="mb-4 text-sm text-white/70">Ongoing enablement: training, governance, and iteration to scale adoption.</p>
+              <p className="mb-4 text-sm text-white/70">Not a one-off project, but a loop: adopt, measure, improve.</p>
               <ul className="mb-6 space-y-2 text-sm text-white/70">
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Playbooks + office hours</li>
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Guardrails + model lifecycle</li>
-                <li className="flex items-start gap-2"><Check className="mt-0.5 h-4 w-4" /> Quarterly value reviews</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Practical playbooks embedded in daily work</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Guardrails + lifecycle management for long-term safety</li>
+                <li className="flex items-start gap-2"><Check className="shrink-0 mt-1 h-5 w-5 text-green-400" /> Quarterly reviews to refine workflows and capture new value</li>
               </ul>
               <a href="#quote" className="inline-flex items-center gap-2 text-sm text-white hover:underline">Scale with us <ArrowRight className="h-4 w-4" /></a>
             </Card>
@@ -323,27 +416,101 @@ export default function App() {
       </section>
 
       <section id="lab" className="py-16">
-        <Container>
-          <SectionTitle eyebrow="Live Demos" title="The Lab: feel the difference" subtitle="Touch simple prototypes that mirror your workflows." />
-          <div className="grid gap-6 md:grid-cols-2">
-            <BeforeAfter />
-            <Card>
-              <div className="mb-4 flex items-center gap-3"><Sparkles className="h-5 w-5" /><h3 className="text-lg font-semibold">Copilot moments</h3></div>
-              <ul className="space-y-3 text-sm text-white/70">
-                <li className="rounded-xl border border-white/10 bg-white/5 p-3">Draft a customer reply from CRM, knowledge base and policy docs—<em>one click</em>.</li>
-                <li className="rounded-xl border border-white/10 bg-white/5 p-3">Summarize a 30‑page PDF to 6 action items (tóm tắt nhanh).</li>
-                <li className="rounded-xl border border-white/10 bg-white/5 p-3">Generate tailored leads from your ICP and write first‑touch emails.</li>
-              </ul>
-              <p className="mt-4 text-xs text-white/50">We’ll customize these micro‑demos for your stack during discovery.</p>
-            </Card>
-          </div>
-        </Container>
-      </section>
+  <Container>
+    <SectionTitle
+      eyebrow="Proving Ground"
+      title="See the workflow, feel the outcome"
+      subtitle="Short, vendor‑neutral tests that prove what works with your data and guardrails."
+    />
+
+    <div className="grid gap-6 md:grid-cols-2">
+      {/* Before / After — keep your component, adjust labels */}
+      <Card>
+        <div className="mb-4 flex items-center gap-3">
+          <span className="text-sm uppercase tracking-wider text-white/60">Before → After</span>
+        </div>
+
+        {/* Replace with your <BeforeAfter /> if you prefer */}
+        <div className="space-y-4">
+  {/* Point 1 */}
+  <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className="mb-2 text-xs uppercase tracking-wide text-red-400">Before</div>
+    <div className="mb-3 text-sm text-white/80">Manual data lookups across 7 tools</div>
+    <div className="mb-2 text-xs uppercase tracking-wide text-green-400">After</div>
+    <div className="text-sm text-white/80">One screen, validated fields, audit trail</div>
+  </div>
+
+  {/* Point 2 */}
+  <div className="rounded-xl border border-white/10 bg-white/5 p-4">
+    <div className="mb-2 text-xs uppercase tracking-wide text-red-400">Before</div>
+    <div className="mb-3 text-sm text-white/80">Customer emails triaged by 4 different people</div>
+    <div className="mb-2 text-xs uppercase tracking-wide text-green-400">After</div>
+    <div className="text-sm text-white/80">Auto-triage with QA gates & exception queue</div>
+  </div>
+</div>
+
+
+        <p className="mt-4 text-xs text-white/50">
+          We use your artifacts and real scenarios. No screenshots, no fluff.
+        </p>
+      </Card>
+
+      {/* Outcome tests */}
+      <Card>
+        <div className="mb-4 flex items-center gap-3">
+          <Sparkles className="h-5 w-5" />
+          <h3 className="text-lg font-semibold">Outcome tests</h3>
+        </div>
+
+        <ul className="space-y-3 text-sm text-white/80">
+          <li className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="font-medium">Reply quality</div>
+            <div className="text-white/70">
+              Draft a customer response from CRM + knowledge base with
+              <em> acceptance criteria </em> (tone, policy, citation).
+            </div>
+          </li>
+
+          <li className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="font-medium">Decision clarity</div>
+            <div className="text-white/70">
+              Turn a 30‑page PDF into 6 action items with confidence thresholds and links back to source.
+            </div>
+          </li>
+
+          <li className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <div className="font-medium">Throughput</div>
+            <div className="text-white/70">
+              Route leads that match your ICP and prep first‑touch drafts—then measure time saved per rep.
+            </div>
+          </li>
+        </ul>
+
+        <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-3 text-xs text-white/60">
+          <div className="mb-1 font-medium text-white/70">How we judge it</div>
+          <ul className="list-disc pl-5">
+            <li>Defined “done” per output</li>
+            <li>Guardrails: validation, citations, exception routing</li>
+            <li>Weekly impact: time saved, error rate, adoption</li>
+          </ul>
+        </div>
+
+        <p className="mt-4 text-xs text-white/50">
+          Vendor‑neutral. We keep what works in your stack and cut what doesn’t.
+        </p>
+      </Card>
+    </div>
+  </Container>
+</section>
 
       <section id="roi" className="py-16">
         <Container>
-          <SectionTitle eyebrow="Business Case" title="Prove it with numbers" subtitle="Use the estimator below—then we’ll validate with your real data." />
-          <ROI />
+          <SectionTitle
+  eyebrow="Business Case"
+  title="See the value at a glance"
+  subtitle="A simple lens for impact. We stress-test the assumptions with your real workflows during the AI Impact Scan."
+/>
+      <ROI />
         </Container>
       </section>
 
